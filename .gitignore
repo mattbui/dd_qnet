@@ -1,0 +1,6 @@
+output/*
+.vscode/*
+.ipynb_checkpoints/*
+log.txt
+*.pyc
+test.ipynb
