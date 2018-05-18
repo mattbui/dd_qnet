@@ -1,3 +1,5 @@
+from __future__ import print_function, division
+
 import numpy as np
 import keras
 from keras.models import Model, load_model
@@ -82,8 +84,8 @@ class Qnet:
         self.model.save(path + "/main.h5")
     
     def load(self, path):
-        self.target_model.set_weights(load_model(path + "/target.h5").get_weights)
-        self.model.set_weights(load_model(path + "/main.h5").get_weights)
+        self.target_model.load_weights(path + "/target.h5")
+        self.model.load_weights(path + "/main.h5")
 
     def learn_on_minibatch(self, minibatch, gamma):
         states = np.vstack(minibatch[:,0])
