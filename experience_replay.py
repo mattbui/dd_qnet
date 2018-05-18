@@ -26,4 +26,4 @@ class ExperienceReplay:
         np.save(self.output_dir + "/experience", self.buffer)
 
     def load(self, path):
-        self.buffer = np.load(path + "/experience.npy")
+        self.buffer = np.load(path + "/experience.npy").tolist()
