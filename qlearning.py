@@ -22,7 +22,6 @@ if(config.args.continue_from != None):
 elif(config.args.from_pretrain != None):
     qnet.load(config.args.from_pretrain)
 
-epsilon = config.args.start_epsilon
 epsilon_decay = (config.args.start_epsilon - config.args.end_epsilon)/config.args.annealing_steps
 
 while True:
@@ -38,7 +37,7 @@ while True:
     for i in range(config.args.num_training_step):
 
         # get action
-        if(config.total_step < config.args.num_pretrain_step or np.random.rand(1) < epsilon):
+        if(config.total_step < config.args.num_pretrain_step or np.random.rand(1) < config.epsilon):
             action = np.random.randint(env.num_action)
             num_random_step += 1
 
@@ -53,13 +52,13 @@ while True:
         replay_ep.add(np.reshape(np.array([state, action, reward, done, newstate]), [1, 5]))
         # train
         if config.total_step > config.args.num_pretrain_step:
-            if epsilon > config.args.end_epsilon:
-                epsilon -= epsilon_decay
+            if config.epsilon > config.args.end_epsilon:
+                config.epsilon -= epsilon_decay
 
             if config.total_step % config.args.online_update_freq == 0:
                 train_batch = replay.sample(config.args.batch_size)
                 loss = qnet.learn_on_minibatch(train_batch, config.args.gamma)
-                sys.stdout.write("\rTrain step at {}th step | loss {} | epsilon {}".format(config.total_step, loss, epsilon))
+                sys.stdout.write("\rTrain step at {}th step | loss {} | epsilon {}".format(config.total_step, loss, config.epsilon))
                 sys.stdout.flush()
             
             if config.total_step % config.args.target_update_freq == 0:

@@ -30,11 +30,14 @@ class Config:
 
         self.episode = 0
         self.total_step = 0
+        self.epsilon = self.args.start_epsilon
         
         if(self.args.continue_from != None):
+            continue_from = self.args.continue_from
             argv = self.load()
             self.args = parser.parse_args(argv)
             self.args.output_dir = output_dir
+            self.args.continue_from = continue_from
 
         self.save()
         self.print_arguments()
@@ -49,6 +52,7 @@ class Config:
                     file.write("--" + arg + " " + str(getattr(self.args, arg)) + "\n")
             file.write("episode " + str(self.episode) + '\n')
             file.write("total_step " + str(self.total_step) + '\n')
+            file.write("epsilon " + str(self.epsilon) + '\n')
     def load(self):
 
         with open(self.args.continue_from + "/parameters.txt", 'r') as file:
@@ -59,6 +63,8 @@ class Config:
                     self.episode = int(value)
                 elif(arg == "total_step"):
                     self.total_step = int(value)
+                elif(arg == "epsilon"):
+                    self.epsilon = float(value)
                 else:
                     argv.extend([arg, value])
         return argv
@@ -77,4 +83,7 @@ class Config:
         print("-----------  Configuration Arguments -----------")
         for arg in sorted(vars(self.args)):
             print(arg, getattr(self.args, arg))
+        print("Total step: {}".format(self.total_step))
+        print("Episode: {}".format(self.episode))
+        print("Epsilon: {}".format(self.epsilon))
         print("------------------------------------------------")
