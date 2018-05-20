@@ -5,6 +5,7 @@ import gym_gazebo
 import numpy as np
 import sys
 import os
+import time
 from ddq_model import Qnet
 from experience_replay import ExperienceReplay
 from utils import Config
@@ -48,6 +49,7 @@ while True:
         newstate, reward, done, _ = env.step(action)
         if(newstate == []):
             print("Terminate")
+            # state = env.reset()
             break
         replay_ep.add(np.reshape(np.array([state, action, reward, done, newstate]), [1, 5]))
         # train

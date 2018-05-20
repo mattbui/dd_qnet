@@ -34,7 +34,7 @@ class Qnet:
         flatten = Flatten()(inner)
         dense = Dense(512, activation='relu')(flatten)
 
-        laser_pos_inp = Input(shape=(self.input_size[1] + self.input_size[2],))
+        laser_pos_inp = Input(shape=(self.input_size[1],))
 
         concat = Concatenate()([dense, laser_pos_inp])
         out = Dense(self.output_size + 1)(concat) # add 1 more unit for value
@@ -53,17 +53,17 @@ class Qnet:
     def get_qvalues(self, states):
         imgs = np.stack(states[:, 0])
         lasers = np.stack(states[:, 1])
-        poses = np.stack(states[:, 2])
-        laser_poses = np.concatenate((lasers, poses), axis=1)
-        predicted = self.model.predict([imgs, laser_poses])
+        # poses = np.stack(states[:, 2])
+        # laser_poses = np.concatenate((lasers, poses), axis=1)
+        predicted = self.model.predict([imgs, lasers])
         return predicted
 
     def get_target_qvalues(self, states):
         imgs = np.stack(states[:, 0])
         lasers = np.stack(states[:, 1])
-        poses = np.stack(states[:, 2])
-        laser_poses = np.concatenate((lasers, poses), axis=1)
-        predicted = self.target_model.predict([imgs, laser_poses])
+        # poses = np.stack(states[:, 2])
+        # laser_poses = np.concatenate((lasers, poses), axis=1)
+        predicted = self.target_model.predict([imgs, lasers])
         return predicted
 
     def get_actions(self, states):
@@ -103,13 +103,13 @@ class Qnet:
 
         imgs = np.stack(states[:, 0])
         lasers = np.stack(states[:, 1])
-        poses = np.stack(states[:, 2])
-        laser_poses = np.concatenate((lasers, poses), axis=1)
-        predicted = self.model.predict([imgs, laser_poses])
+        # poses = np.stack(states[:, 2])
+        # laser_poses = np.concatenate((lasers, poses), axis=1)
+        predicted = self.model.predict([imgs, lasers])
         
         qvalues = self.get_qvalues(states)
         for i in range(qvalues.shape[0]):
             qvalues[i, actions[i]] = target_q[i]
 
-        loss = self.model.train_on_batch([imgs, laser_poses], qvalues)
+        loss = self.model.train_on_batch([imgs, lasers], qvalues)
         return loss

@@ -26,7 +26,7 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
     def __init__(self):
         # Launch the simulation with the given launchfile name
         gazebo_env.GazeboEnv.__init__(self, "MazeColor.launch")
-        self.vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=5)
+        self.vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=11)
         self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
         self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
         self.reset_proxy = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
@@ -41,7 +41,6 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         self.hint_pos.append(hint_target);
         hint_target = [[1.5, 0], [4.75, 0], [4.75, -3.75], [8, -3.75], [8, 0], [6.5, 0]]
         self.hint_pos.append(hint_target)
-        self.hint_pos.append(hint_target)
         hint_target = [[1.5, 0], [1.5, 2], [5, 2], [5, 3.5], [8.5, 3.5]]
         self.hint_pos.append(hint_target)
         
@@ -49,8 +48,9 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
 
         rospy.wait_for_service('gazebo/set_model_state')
 
-        self.num_target = np.random.randint(3)
-
+        # self.num_target = np.random.randint(3)
+        self.num_target = 2
+        print("Setting target {}th".format(self.num_target))
         self.num_hint = len(self.hint_pos[self.num_target])
         self.checked_point = [0] * self.num_hint
         self.setTarget()
@@ -68,7 +68,17 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
 
         self._seed()
 
+    def resetTarget(self):
+        state = ModelState()
+        state.reference_frame = "world"
+        for i in range(6):
+            state.model_name = self.name_hint + str(i)
+            state.pose.position.x = (i+1)
+            state.pose.position.y = -6
+            self.set_model(state)
+
     def setTarget(self):
+        # self.resetTarget()
         state = ModelState()
         state.model_name = self.name_target
         state.reference_frame = "world"
@@ -96,22 +106,21 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         return math.sqrt((x-a)*(x-a) +(y-b) * (y-b))
 
     def calculate_reward(self, done, pos):
-        min_range = 1.0
-        min_range_target = 2.0
-        reward = -1
+        min_range = 0.3
+        min_range_target = 0.4
+        reward = 5
         if (done):
             dist_to_target = self.calculate_distance(pos.x, pos.y, self.target_pos[self.num_target][0], self.target_pos[self.num_target][1])
             if dist_to_target < min_range_target:
-                reward = 200 / (dist_to_target + 1)
+                reward = 300
             else:
                 reward = -200
         else:
             for i in range(self.num_hint):
                 dist_to_hint = self.calculate_distance(pos.x, pos.y, self.hint_pos[self.num_target][i][0], self.hint_pos[self.num_target][i][1])
-                if self.checked_point[i] == 0 and  dist_to_hint < min_range:
-                    reward = max(100 / (dist_to_hint + 1), reward)
-                    if dist_to_hint < 0.41: 
-                        self.checked_point[i] = 1
+                if self.checked_point[i] == 0 and dist_to_hint < min_range:
+                    reward = 100
+                    self.checked_point[i] = 1
         
         return reward
 
@@ -161,7 +170,7 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         vel_cmd = Twist()
         vel_cmd.linear.x = 0.2
         max_ang_speed = 0.3
-        ang_vel = (action-5)*max_ang_speed*0.5 #from (-0.33 to + 0.33)
+        ang_vel = (action-5)*max_ang_speed*0.5 
         vel_cmd.angular.z = ang_vel
         self.vel_pub.publish(vel_cmd)
 
@@ -191,16 +200,7 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         return np.reshape(np.array([image, np.asarray(laser), np.asarray([pos.x, pos.y], dtype = np.float32)]), [1, 3]), reward, done, {}
 
     def _reset(self):
-
-        #cv2.destroyAllWindows()
-        # Resets the state of the environment and returns an initial observation.
-        # rospy.wait_for_service('/gazebo/reset_simulation')
-        # try:
-        #     #reset_proxy.call()
-        #     self.reset_proxy()
-        # except rospy.ServiceException:
-        #     print ("/gazebo/reset_simulation service call failed")
-
+        print("Resetting ...")
         rospy.wait_for_service('gazebo/set_model_state')
         state = ModelState()
         state.model_name = self.name_model
