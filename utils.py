@@ -2,6 +2,7 @@ from __future__ import division, print_function
 import time
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 
 class Config:
@@ -27,7 +28,8 @@ class Config:
 
         self.args = parser.parse_args(argv)
         output_dir = self.args.output_dir
-
+        self.losses = []
+        self.reward = []
         self.episode = 0
         self.total_step = 0
         self.epsilon = self.args.start_epsilon
@@ -42,6 +44,18 @@ class Config:
         self.save()
         self.print_arguments()
 
+    def loss_plot(self):
+        plt.title("loss history")
+        step = len(self.losses) / 100
+        plt.plot(range(len(self.losses[::step])), self.losses[::step])
+        plt.savefig("loss")
+
+    def reward_plot(self):
+        plt.title("reward history")
+        step = len(self.reward) / 100
+        plt.plot(range(len(self.reward[::step])), self.reward[::step])
+        plt.savefig("reward")
+
     def save(self):
         if(not os.path.exists(self.args.output_dir)):
             os.makedirs(self.args.output_dir)
@@ -53,6 +67,10 @@ class Config:
             file.write("episode " + str(self.episode) + '\n')
             file.write("total_step " + str(self.total_step) + '\n')
             file.write("epsilon " + str(self.epsilon) + '\n')
+        
+        np.save("loss", np.asarray(self.losses))
+        np.save("reward", np.asarray(self.reward))
+        
     def load(self):
 
         with open(self.args.continue_from + "/parameters.txt", 'r') as file:
