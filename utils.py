@@ -10,11 +10,10 @@ class Config:
     def __init__(self, argv):
         parser = ArgumentParser()
         parser.add_argument("--batch_size", type=int, default=32)
-        parser.add_argument("--gamma", type=float, default=0.99)
+        parser.add_argument("--gamma", type=float, default=0.95)
         parser.add_argument("--start_epsilon", type=float, default=1.0)
-        parser.add_argument("--end_epsilon", type=float, default=0.1)
+        parser.add_argument("--end_epsilon", type=float, default=0.01)
         parser.add_argument("--annealing_steps", type=int, default=10000)
-        parser.add_argument("--alpha", type=float, default=0.2)
         parser.add_argument("--num_training_step", type=int, default=2000)
         parser.add_argument("--num_pretrain_step", type=int, default=4000)
         parser.add_argument("--tau", type=float, default=0.001)
