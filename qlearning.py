@@ -54,6 +54,7 @@ while config.episode <= config.args.num_episode:
             # state = env.reset()
             break
         replay_ep.add(np.reshape(np.array([state, action, reward, done, newstate]), [1, 5]))
+        config.reward.append(reward)
         # train
         if config.total_step > config.args.num_pretrain_step:
             if config.epsilon > config.args.end_epsilon:
@@ -64,11 +65,11 @@ while config.episode <= config.args.num_episode:
                 loss = qnet.learn_on_minibatch(train_batch, config.args.gamma)
                 total_loss += loss
                 num_training += 1
+                config.losses.append(loss)
                 sys.stdout.write("\rTrain step at {}th step | loss {} | epsilon {}".format(config.total_step, loss, config.epsilon))
                 sys.stdout.flush()
             
             if config.total_step % config.args.target_update_freq == 0:
-
                 # print("Update target net")
                 qnet.update_target_model(config.args.tau)
         
