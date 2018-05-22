@@ -22,7 +22,7 @@ class Config:
         parser.add_argument("--save_model_freq", type=int, default=50)
         parser.add_argument("--replay_buffer_size", type=int, default=100000)
         parser.add_argument("--output_dir", type=str, default="output/deepq")
-        parser.add_argument("--num_epsisode", type = int, default=2000)
+        parser.add_argument("--num_episode", type = int, default=2000)
         parser.add_argument("--from_pretrain", type=str, default=None)
         parser.add_argument("--continue_from", type=str, default=None)
 
@@ -68,8 +68,8 @@ class Config:
             file.write("total_step " + str(self.total_step) + '\n')
             file.write("epsilon " + str(self.epsilon) + '\n')
         
-        np.save("loss", np.asarray(self.losses))
-        np.save("reward", np.asarray(self.reward))
+        np.save(self.args.output_dir + "loss", np.asarray(self.losses))
+        np.save(self.args.output_dir + "reward", np.asarray(self.reward))
         
     def load(self):
 

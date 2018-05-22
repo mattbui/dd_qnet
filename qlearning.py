@@ -80,6 +80,8 @@ while config.episode <= config.args.num_episode:
             break
 
     replay.add(replay_ep.buffer)
+    if(num_training == 0):
+        num_training = 1
     
     print("\nDone epoch in {} steps, {} random steps, Total reward: {}, Total step: {}, Average loss: {}".format(config.total_step - start_step, num_random_step, total_reward, config.total_step, total_loss/num_training))
 

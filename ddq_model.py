@@ -100,10 +100,13 @@ class Qnet:
 
         done_multiplier = 1 - dones
         target_q = rewards + gamma * double_q * done_multiplier
-        
+
         qvalues = self.get_qvalues(states)
         for i in range(qvalues.shape[0]):
             qvalues[i, actions[i]] = target_q[i]
+        
+        imgs = np.stack(states[:, 0])
+        lasers = np.stack(states[:, 1])
 
         loss = self.model.train_on_batch([imgs, lasers], qvalues)
         return loss
