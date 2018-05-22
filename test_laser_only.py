@@ -14,7 +14,7 @@ from utils import Config
 env = gym.make('GazeboTurtlebotMazeColor-v0')
 qnet = Qnet(env.num_state, env.num_action)
 
-from_pretrain = "output/laser_only"
+from_pretrain = sys.argv[1]
 
 if(from_pretrain != None):
     qnet.load(from_pretrain)
