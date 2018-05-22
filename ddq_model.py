@@ -100,12 +100,6 @@ class Qnet:
 
         done_multiplier = 1 - dones
         target_q = rewards + gamma * double_q * done_multiplier
-
-        imgs = np.stack(states[:, 0])
-        lasers = np.stack(states[:, 1])
-        # poses = np.stack(states[:, 2])
-        # laser_poses = np.concatenate((lasers, poses), axis=1)
-        predicted = self.model.predict([imgs, lasers])
         
         qvalues = self.get_qvalues(states)
         for i in range(qvalues.shape[0]):
