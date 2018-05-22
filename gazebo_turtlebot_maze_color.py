@@ -38,10 +38,10 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         self.target_pos = [[-0.25, -2], [6.5, -1.75], [6.5, 1.75]]
         self.hint_pos = []
         hint_target = [[1.5, 0], [1.5, -2], [3, -2], [3, -3.75], [-0.25, -3.75]]
-        self.hint_pos.append(hint_target);
+        self.hint_pos.append(hint_target)
         hint_target = [[1.5, 0], [4.75, 0], [4.75, -3.75], [8, -3.75], [8, 0], [6.5, 0]]
         self.hint_pos.append(hint_target)
-        hint_target = [[1.5, 0], [1.5, 2], [5, 2], [5, 3.5], [8.5, 3.5]]
+        hint_target = [[1.5, 0], [4.75, 0], [4.75, -3.75], [8, -3.75], [8, 0], [6.5, 0]]
         self.hint_pos.append(hint_target)
         
         self.set_model = rospy.ServiceProxy('gazebo/set_model_state', SetModelState)
@@ -49,7 +49,7 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         rospy.wait_for_service('gazebo/set_model_state')
 
         # self.num_target = np.random.randint(3)
-        self.num_target = 2
+        self.num_target = 1
         print("Setting target {}th".format(self.num_target))
         self.num_hint = len(self.hint_pos[self.num_target])
         self.checked_point = [0] * self.num_hint
