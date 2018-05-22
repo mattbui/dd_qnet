@@ -68,8 +68,8 @@ class Config:
             file.write("total_step " + str(self.total_step) + '\n')
             file.write("epsilon " + str(self.epsilon) + '\n')
         
-        np.save(self.args.output_dir + "loss", np.asarray(self.losses))
-        np.save(self.args.output_dir + "reward", np.asarray(self.reward))
+        np.save(self.args.output_dir + "/loss", np.asarray(self.losses))
+        np.save(self.args.output_dir + "/reward", np.asarray(self.reward))
         
     def load(self):
 
