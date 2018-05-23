@@ -6,7 +6,6 @@ import numpy as np
 import sys
 import os
 import time
-#from ddq_model import Qnet
 from laser_model import Qnet
 from experience_replay import ExperienceReplay
 from utils import Config
@@ -24,7 +23,8 @@ else:
     if(len(sys.argv) == 4):
         go_straight = sys.argv[3] == "True"
     qnet.load(from_pretrain)
-
+    print("Num actions: ", env.num_action)
+    time.sleep(5)
     while True:
         state = env.reset()
         total_reward = 0
@@ -39,12 +39,12 @@ else:
                 action = np.random.randint(env.num_action)
                 num_random_step += 1
             else:
-                action = qnet.get_actions(state.reshape(1, -1))[0]
+                action = qnet.get_actions_test(state)
             # get after take action
+            # action = input("action: ")
             newstate, reward, done, _ = env.step(action)
             if(newstate == []):
                 print("Terminate")
-                # state = env.reset()
                 break
 
             total_reward += reward
