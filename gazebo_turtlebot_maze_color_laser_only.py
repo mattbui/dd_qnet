@@ -34,21 +34,26 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
 
         self.name_model = 'mobile_base'
         self.name_target = 'Target'
+        self.name_hint = 'Hint'
 
-        self.target_pos = [[-0.25, -2], [6.5, -1.75], [6.5, 1.75], [3.25, 3.5], [8.25, 1.5]]
+        self.target_pos = [[-0.25, -2], [6.5, -1.75], [6.5, 1.75], [3.5, 3.5], [8.25, 1.5]]
+        self.hint_pos = []
+        hint_target = [[1.5, 0], [1.5, -2], [3, -2], [3, -3.75], [-0.25, -3.75]]
+        self.hint_pos.append(hint_target)
+        hint_target = [[1.5, 0], [4.75, 0], [4.75, -3.75], [8, -3.75], [8, 0], [6.5, 0]]
+        self.hint_pos.append(hint_target)
+        hint_target = [[1.5, 0], [4.75, 0], [4.75, -3.75], [8, -3.75], [8, 0], [6.5, 0]]
+        self.hint_pos.append(hint_target)
         
         self.set_model = rospy.ServiceProxy('gazebo/set_model_state', SetModelState)
 
         rospy.wait_for_service('gazebo/set_model_state')
         try:
-            self.num_target = np.random.randint(5)
+            # self.num_target = np.random.randint(3)
+            self.num_target = 2
             print("Setting target {}th".format(self.num_target))
-            state = ModelState()
-            state.model_name = self.name_target
-            state.reference_frame = "world"
-            state.pose.position.x = self.target_pos[self.num_target][0]
-            state.pose.position.y = self.target_pos[self.num_target][1]
-            self.set_model(state)
+            self.num_hint = len(self.hint_pos[self.num_target])
+            self.setTarget()
 
         except rospy.ServiceException:
             print ("/gazebo/set_model_state service call failed")
@@ -73,9 +78,41 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         self.width = 84
         self.height = 84
         self.num_action = 11
+        # self.num_state = [[84, 84, 3], 100, 2]
         self.num_state = [100]
 
         self._seed()
+
+    def resetTarget(self):
+        state = ModelState()
+        state.reference_frame = "world"
+        for i in range(6):
+            state.model_name = self.name_hint + str(i)
+            state.pose.position.x = (i+1)
+            state.pose.position.y = -6
+            self.set_model(state)
+
+    def my_set_target(self):
+        state = ModelState()
+        state.model_name = self.name_target
+        state.reference_frame = "world"
+        state.pose.position.x = self.target_pos[self.num_target][0]
+        state.pose.position.y = self.target_pos[self.num_target][1]
+        self.set_model(state)
+
+    def setTarget(self):
+        # self.resetTarget()
+        state = ModelState()
+        state.model_name = self.name_target
+        state.reference_frame = "world"
+        state.pose.position.x = self.target_pos[self.num_target][0]
+        state.pose.position.y = self.target_pos[self.num_target][1]
+        self.set_model(state)
+        for i in range(self.num_hint):
+            state.model_name = self.name_hint + str(i)
+            state.pose.position.x = self.hint_pos[self.num_target][i][0]
+            state.pose.position.y = self.hint_pos[self.num_target][i][1]
+            self.set_model(state)
 
     def calculate_observation(self, data, pos):
         min_range = 0.21
@@ -170,7 +207,7 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
 
         # counter = len(os.listdir("/home/tailongnguyen/dd_qnet/images/"))
         # cv2.imwrite("/home/tailongnguyen/dd_qnet/images/{}.png".format(counter), image)
-        # rospy.wait_for_service('/gazebo/pause_physics')
+        rospy.wait_for_service('/gazebo/pause_physics')
 
         try:
             #resp_pause = pause.call()
@@ -193,14 +230,10 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
 
         rospy.wait_for_service('gazebo/set_model_state')
         try:
-            self.num_target = np.random.randint(5)
+            self.num_target = 2
             print("Setting target {}th".format(self.num_target))
-            state = ModelState()
-            state.model_name = self.name_target
-            state.reference_frame = "world"
-            state.pose.position.x = self.target_pos[self.num_target][0]
-            state.pose.position.y = self.target_pos[self.num_target][1]
-            self.set_model(state)
+            self.num_hint = len(self.hint_pos[self.num_target])
+            self.setTarget()
 
         except rospy.ServiceException:
             print ("/gazebo/set_model_state service call failed")
@@ -218,6 +251,11 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         except rospy.ServiceException:
             print ("/gazebo/unpause_physics service call failed")
 
+        # rospy.wait_for_service('gazebo/set_model_state')
+        # self.num_target = np.random.randint(5)
+        # print("Setting target {}th".format(self.num_target))
+        # self.my_set_target()
+
         #read laser data
         data = None
         while data is None:
@@ -226,6 +264,7 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
             except:
                 pass
         pos = self.model_state(self.name_model, "world").pose.position
+        self.target_state = self.model_state(self.name_target, "world")
         done = self.calculate_observation(data, pos)
         image, laser = self.discretize_observation(data)
         rospy.wait_for_service('/gazebo/pause_physics')

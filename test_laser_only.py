@@ -19,9 +19,7 @@ else:
     qnet = Qnet(env.num_state, env.num_action)
 
     from_pretrain = sys.argv[1]
-    epsilon = float(sys.argv[2])
-    if(len(sys.argv) == 4):
-        go_straight = sys.argv[3] == "True"
+    epsilon = float(sys.argv[2]
     qnet.load(from_pretrain)
     print("Num actions: ", env.num_action)
     time.sleep(5)
@@ -33,9 +31,7 @@ else:
         for i in range(1000):
             num_step += 1
             # get action
-            if(go_straight and i < 20):
-                action = 5
-            elif(np.random.rand(1) < epsilon):
+            if(np.random.rand(1) < epsilon):
                 action = np.random.randint(env.num_action)
                 num_random_step += 1
             else:
