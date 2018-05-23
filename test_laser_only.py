@@ -19,7 +19,7 @@ else:
     qnet = Qnet(env.num_state, env.num_action)
 
     from_pretrain = sys.argv[1]
-    epsilon = float(sys.argv[2]
+    epsilon = float(sys.argv[2])
     qnet.load(from_pretrain)
     print("Num actions: ", env.num_action)
     time.sleep(5)
