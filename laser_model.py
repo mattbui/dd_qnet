@@ -12,6 +12,7 @@ import sys
 import os
 import time
 import random
+import cv2
 
 config = tf.ConfigProto()
 config.gpu_options.per_process_gpu_memory_fraction = 0.7
@@ -50,9 +51,39 @@ class Qnet:
     def get_target_qvalues(self, states):
         predicted = self.target_model.predict(states)
         return predicted
+    
+    def find_hint(self, image):
+        im = image[:,:,::-1]
+        gray = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
+        ret, thresh1 = cv2.threshold(gray, 175, 255, cv2.THRESH_BINARY)
+        im1, contours, hierarchy = cv2.findContours(thresh1, 1, 2)
+        result = []
+        for cnt in contours:
+            x, y, w, h = cv2.boundingRect(cnt)
+            if w*h >= 30:
+                result.append(float(x + w/2)/image.shape[1])
+        print("Hints: ", result)
+        if len(result) > 0:
+            return np.mean(result)
+        else:
+            return None
+
+    def get_actions_test(self, states):
+        image, laser = states
+        hint_pos = self.find_hint(image)
+        if hint_pos is not None:
+            # if hints are found, move towards them
+            action = int((1-hint_pos) * 10)
+            return action
+        else:
+            # else use q model to choose action
+            qvalues = self.get_qvalues(laser.reshape(1, -1))
+            actions = np.argmax(qvalues, axis=1)
+            return actions[0]
 
     def get_actions(self, states):
-        qvalues = self.get_qvalues(states)
+        image, laser = states[:, 0], states[:, 1]
+        qvalues = self.get_qvalues(np.vstack(laser))
         actions = np.argmax(qvalues, axis=1)
         return actions
 

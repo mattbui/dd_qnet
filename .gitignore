@@ -4,3 +4,6 @@ output/*
 log.txt
 *.pyc
 test.ipynb
+images/
+laser_only_2k_ep_with_target/
+laser-only/
