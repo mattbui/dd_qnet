@@ -4,6 +4,8 @@
 Basic requirements:
 - python2
 - [gym-gazebo](https://github.com/erlerobot/gym-gazebo)
+- keras
+- tensorflow
 
 ## Environment setup
 
