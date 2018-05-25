@@ -1,5 +1,7 @@
 # Double Dueling Q Net
 
+![running](screenshots/gazebo.gif)
+
 ## Table of contents
 - [Requirements](#requirements)
 - [Environment setup](#environment-setup)
