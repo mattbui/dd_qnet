@@ -1,5 +1,17 @@
 # Double Dueling Q Net
 
+## Table of contents
+- [Requirements](#requirements)
+- [Environment setup](#environment-setup)
+- [Project structure](#project-structure)
+    - [Environments](#environments)
+    - [Models](#models)
+- [Usage](#usage)
+    - [Image CNN model](#image-cnn-model)
+    - [DNN laser model](#dnn-laser-model)
+    - [Use laser model with hint detect strategy](#use-laser-model-with-hint-detect-strategy)
+- [Pretrain models](#pretrain-models)
+
 ## Requirements
 Basic requirements:
 - python2
@@ -34,7 +46,7 @@ List environments:
 
 ![evn4](screenshots/env4.png)
 
-### Model
+### Models
 We have 2 type of model:
 - `ddq_model.py`: the model used CNN architecture and image with laser as input state. The model use the architecture proposed in this [paper](https://storage.googleapis.com/deepmind-data/assets/papers/DeepMindNature14236Paper.pdf)
 - `laser_model.py`: The model use DNN and laser as input state.
@@ -78,7 +90,7 @@ Run: `python test_laser_image.py <from_pretrain_dir> <epsilon>`
 python test_laser_image.py laser-only 0.0
 ```
 
-## Pretrain model
+## Pretrain models
 Some of our pretrain model can be found [here](https://drive.google.com/open?id=1g8cAxaL6CcqavwaLLHuiR6_4DxYZ_WFq)
 
 It can be use as pretrain model or continue to train with the parameters `--from_pretrain` or `--continue_from` in the learning files. For examples: `python laser_learn --continue_from laser-only --output_dir laser-only`
