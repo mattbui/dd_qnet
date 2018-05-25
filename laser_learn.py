@@ -25,7 +25,7 @@ elif(config.args.from_pretrain != None):
 
 epsilon_decay = (config.args.start_epsilon - config.args.end_epsilon)/config.args.annealing_steps
 
-while config.episode <= config.episode:
+while config.episode <= config.args.num_episode:
     state = env.reset()
     replay_ep = ExperienceReplay(config.args.output_dir ,config.args.replay_buffer_size)
     total_reward = 0
@@ -82,6 +82,9 @@ while config.episode <= config.episode:
     if(num_training == 0):
         num_training = 1
     print("\nDone epoch in {} steps, {} random steps, Total reward: {}, Total step: {}, Average loss: {}".format(config.total_step - start_step, num_random_step, total_reward, config.total_step, total_loss/num_training))
+    if(config.total_step > config.args.num_pretrain_step):
+        config.reward.append(total_reward)
+        config.losses.append(total_loss/num_training)
 
     if(config.episode % config.args.save_model_freq == 0 and config.total_step > config.args.num_pretrain_step):
         qnet.save(config.args.output_dir)

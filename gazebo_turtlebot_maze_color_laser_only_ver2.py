@@ -37,7 +37,7 @@ class GazeboTurtlebotMazeColorEnv(gazebo_env.GazeboEnv):
         self.target_pos = [[-0.25, -2], [6.5, -1.75], [6.5, 1.75], [3.25, 3.5], [8.25, 1.5]]
         self.check_point = [False] * len(self.target_pos)
         self.set_model = rospy.ServiceProxy('gazebo/set_model_state', SetModelState)
-
+        
         self.set_target()
 
         #get model state service
