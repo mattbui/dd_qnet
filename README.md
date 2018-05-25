@@ -32,7 +32,7 @@ The gym-gazebo environments can be found [here](https://drive.google.com/open?id
 
 ## Project structure
 ### Environments
-The environment files used for different training and tesing situation. To use one environment, copy the code in `gazebo_turtlebot_maze_color*.py` to `gazebo_turtlebot_maze_color.py` in `gym-gazebo/gym_gazebo/envs/custom`
+The environment files used for different training and tesing situation, they are all stored in `custom_envs` folder. To use one environment, copy the code in `gazebo_turtlebot_maze_color*.py` to `gazebo_turtlebot_maze_color.py` in `gym-gazebo/gym_gazebo/envs/custom`
 List environments:
 
 - `gazebo_turtlebot_maze_color.py`: enviroment for training CNN model which use both image and laser as state input. To change target position, change line 52 `self.num_target = 1` to another index (from 0 to 2).
@@ -49,6 +49,7 @@ List environments:
 ![evn4](screenshots/env4.png)
 
 ### Models
+All the main codes are stored in `src` folder
 We have 2 type of model:
 - `ddq_model.py`: the model used CNN architecture and image with laser as input state. The model use the architecture proposed in this [paper](https://storage.googleapis.com/deepmind-data/assets/papers/DeepMindNature14236Paper.pdf)
 - `laser_model.py`: The model use DNN and laser as input state.
