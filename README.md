@@ -22,12 +22,16 @@ The environment files used for different training and tesing situation. To use o
 List environments:
 
 - `gazebo_turtlebot_maze_color.py`: enviroment for training CNN model which use both image and laser as state input. To change target position, change line 52 `self.num_target = 1` to another index (from 0 to 2).
+
 ![evn1](screenshots/env1.png)
 - `gazebo_turtlebot_maze_color_laser_only.py`: enviroment for training laser model. The environment have 5 target position to be random at the start or after one episode end. 
+
 ![env2](screenshots/env2.png)
 - `gazebo_turtlebot_maze_color_laser_only_ver2.py`: environment for training laser model. The environment have 5 hint at 5 corner of the maze, the laser model can learn to go to the corner and turn back. 
+
 ![evn3](screenshots/env3.png)
 - `gazebo_turtlebot_maze_color_laser-image.py`: environment for testing laser model with the image processing strategy. It have 5 different reward and hints positions which can be change by line 59 `self.num_target = 1` in the code to another index (from 0 to 4). 
+
 ![evn4](screenshots/env4.png)
 
 ### Model
