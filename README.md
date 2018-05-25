@@ -1,6 +1,10 @@
 # Double Dueling Q Net
 
+<<<<<<< HEAD
 ![running](screenshots/running.gif)
+=======
+![running](screenshots/gazebo.gif)
+>>>>>>> abbdc74c8442043b8585237e98c20a565c7ec48a
 
 ## Table of contents
 - [Requirements](#requirements)
